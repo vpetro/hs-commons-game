@@ -31,5 +31,7 @@ data GameCard = Red
 currentPlay = M.fromList [(Red,3),(Green,3),(Black,2)]
 currentState = (0, 100) :: GameState
 
+_rewardFromNumPlayed played table = head $ drop (played ! Red) table
+
 main :: IO ()
 main = putStrLn "Hello world!"

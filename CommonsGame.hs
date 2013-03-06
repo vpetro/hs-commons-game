@@ -35,6 +35,11 @@ numPlayers = 8
 
 _rewardFromNumPlayed played table = head $ drop (played ! Red) table
 
+_scoreGreen :: GamePlay -> GameTable -> Double
+_scoreGreen played table
+    | (M.member Green played) && (M.member Black played) = -20.0
+    | (M.member Green played) = fromIntegral $ snd $ _rewardFromNumPlayed played table
+    | otherwise = 0.0
 
 _scoreRed :: GamePlay -> GameTable -> Double
 _scoreRed played table

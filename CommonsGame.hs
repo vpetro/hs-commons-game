@@ -35,5 +35,11 @@ numPlayers = 8
 
 _rewardFromNumPlayed played table = head $ drop (played ! Red) table
 
+
+_scoreRed :: GamePlay -> GameTable -> Double
+_scoreRed played table
+    | (M.member Red played) = fromIntegral $ fst $ _rewardFromNumPlayed played table
+    | otherwise = 0.0
+
 main :: IO ()
 main = putStrLn "Hello world!"

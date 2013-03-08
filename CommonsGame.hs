@@ -56,5 +56,10 @@ _scoreYellow played table
     | (M.member Yellow played) = 6.0
     | otherwise = 0.0
 
+_scoreOrange :: GamePlay -> GameTable -> Double
+_scoreOrange played table
+    | (M.member Orange played) = -8.0 / (fromIntegral $ played ! Orange)
+    | otherwise = 0.0
+
 main :: IO ()
 main = putStrLn "Hello world!"

@@ -48,8 +48,12 @@ _scoreGreen played table
 
 _scoreRed :: GamePlay -> GameTable -> Double
 _scoreRed played table
-    | (M.member Red played) = fromIntegral $ fst $ _rewardFromNumPlayed played table
+    | (M.member Red played) && (M.member Orange played) = _orangeBenefit + _partialRedScore
+    | (M.member Red played) = _partialRedScore
     | otherwise = 0.0
+    where
+        _partialRedScore = fromIntegral $ fst $ _rewardFromNumPlayed played table
+        _orangeBenefit = 10.0 * (fromIntegral $ played ! Orange)
 
 _scoreYellow :: GamePlay -> GameTable -> Double
 _scoreYellow played table

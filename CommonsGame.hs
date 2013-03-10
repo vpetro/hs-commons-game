@@ -65,5 +65,14 @@ _scoreOrange played table
     | (M.member Orange played) = -8.0 / (fromIntegral $ played ! Orange)
     | otherwise = 0.0
 
+_updateMarker :: GamePlay -> Int -> Int -> Int
+_updateMarker played turn m
+    | (mod turn 6 == 0) = m - gc + 0
+    | otherwise = m - gc
+    where
+        gc
+            | M.member Green played  = played ! Green
+            | otherwise = 0
+
 main :: IO ()
 main = putStrLn "Hello world!"

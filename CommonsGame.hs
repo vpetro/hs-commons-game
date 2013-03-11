@@ -67,7 +67,7 @@ _scoreOrange played table
 
 _updateMarker :: GamePlay -> Int -> Int -> Int
 _updateMarker played turn m
-    | (mod turn 6 == 0) = m - gc + 0
+    | (mod turn 6 == 0) = m - gc + 0 {-- the zero should be a random value --}
     | otherwise = m - gc
     where
         gc

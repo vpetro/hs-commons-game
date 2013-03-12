@@ -31,7 +31,7 @@ data GameCard = Red
 currentTable = [(0, 100), (40, 102), (40, 102), (40,102), (44, 106), (46, 108), (48, 110), (50, 0)] :: GameTable
 currentPlay = (M.fromList [(Red,3),(Green,3),(Black,2)]) :: Map GameCard Int
 currentState = (0, 100) :: GameState
-numPlayers = 8
+numPlayers = 8 :: Int
 
 _rewardFromNumPlayed played table = head $ drop (played ! Red) table
 

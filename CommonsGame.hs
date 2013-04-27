@@ -1,5 +1,6 @@
 import Data.Map as M
 import Data.List as L
+import System.Random
 
 -- denotes the current state of the game
 type GameState = (Iteration, Marker)
@@ -25,7 +26,7 @@ data GameCard = Red
               | Green
               | Yellow
               | Orange
-              | Black deriving (Show, Eq, Ord)
+              | Black deriving (Show, Eq, Ord, Enum)
 
 -- some test values here
 currentTable = [(0, 100), (40, 102), (40, 102), (40,102), (44, 106), (46, 108), (48, 110), (50, 0)] :: GameTable
@@ -33,7 +34,9 @@ currentPlay = (M.fromList [(Red,3),(Green,3),(Black,2)]) :: Map GameCard Int
 currentState = (0, 100) :: GameState
 numPlayers = 8 :: Int
 
+
 _rewardFromNumPlayed played table = head $ drop (played ! Red) table
+
 
 score :: GameCard -> GamePlay -> GameTable -> Double
 score Black played table
@@ -61,14 +64,49 @@ score Orange played table
     | (M.member Orange played) = -8.0 / (fromIntegral $ played ! Orange)
     | otherwise = 0.0
 
-_updateMarker :: GamePlay -> Int -> Int -> Int
-_updateMarker played turn m
-    | (mod turn 6 == 0) = m - gc + 0 {-- the zero should be a random value --}
+
+_updateMarker :: GamePlay -> Int -> Int -> Int -> Int
+_updateMarker played turn m i
+    | (turn /= 0 && (mod turn 6) == 0) = m - gc + i
     | otherwise = m - gc
     where
         gc
             | M.member Green played  = played ! Green
             | otherwise = 0
 
+
+randomList low high limit= do
+    gen <- newStdGen
+    return $ take limit (randomRs (low, high) gen :: [Int])
+
+
+updateState currentState currentPlay i = (ci + 1, cm') :: GameState
+    where
+        ci = fst currentState
+        cm = snd currentState
+        cm' = _updateMarker currentPlay ci cm i
+
+
+player i = enumFrom Red !! i
+
+
+groupedCards cls = L.map (\x -> (head x, length x)) cls
+cardLists pcs = group $ sort $ L.map (\sp -> head sp) pcs
+
+
+gameLoop :: GameState -> [[Int]] -> [Int] -> IO ()
+gameLoop curState cardIndicies [] = return $ ()
+gameLoop curState cardIndicies (i:is) = do
+    let playedCards = L.map (\sp -> L.map player sp) cardIndicies
+    let cp = M.fromList (groupedCards $ cardLists $ playedCards)
+    let cs' = updateState curState cp i
+    putStrLn $ show cp ++ ", " ++ show cs' ++ ", " ++ (show i)
+    putStrLn $ show $ L.map (\k -> (k, score k cp currentTable)) (M.keys cp)
+    gameLoop cs' (L.map (\sp -> tail sp) cardIndicies) is
+
+
 main :: IO ()
-main = putStrLn "Hello world!"
+main = do
+    improvements <- randomList 1 6 10
+    cardIndicies <- sequence $ [randomList 0 4 10 | _ <- [1..8]]
+    gameLoop currentState cardIndicies improvements

@@ -35,19 +35,17 @@ numPlayers = 8 :: Int
 
 _rewardFromNumPlayed played table = head $ drop (played ! Red) table
 
-_scoreBlack :: GamePlay -> GameTable -> Double
-_scoreBlack played table
+score :: GameCard -> GamePlay -> GameTable -> Double
+score Black played table
     | M.member Black played = -8.0 / (fromIntegral $ played ! Black)
     | otherwise = 0.0
 
-_scoreGreen :: GamePlay -> GameTable -> Double
-_scoreGreen played table
+score Green played table
     | (M.member Green played) && (M.member Black played) = -20.0
     | (M.member Green played) = fromIntegral $ snd $ _rewardFromNumPlayed played table
     | otherwise = 0.0
 
-_scoreRed :: GamePlay -> GameTable -> Double
-_scoreRed played table
+score Red played table
     | (M.member Red played) && (M.member Orange played) = _orangeBenefit + _partialRedScore
     | (M.member Red played) = _partialRedScore
     | otherwise = 0.0
@@ -55,13 +53,11 @@ _scoreRed played table
         _partialRedScore = fromIntegral $ fst $ _rewardFromNumPlayed played table
         _orangeBenefit = 10.0 * (fromIntegral $ played ! Orange)
 
-_scoreYellow :: GamePlay -> GameTable -> Double
-_scoreYellow played table
+score Yellow played table
     | (M.member Yellow played) = 6.0
     | otherwise = 0.0
 
-_scoreOrange :: GamePlay -> GameTable -> Double
-_scoreOrange played table
+score Orange played table
     | (M.member Orange played) = -8.0 / (fromIntegral $ played ! Orange)
     | otherwise = 0.0
 
